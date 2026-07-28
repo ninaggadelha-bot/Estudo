@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estúdio de Estudo — 5º semestre 2026.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF0EE;--paper-2:#F8FAF9;--ink:#131E1C;--ink-soft:#4A5B57;
+  --rule:#C3CEC9;--sage:#7D8B87;
+  --go:#A8324A;--ped:#C97016;--oft:#286C8B;--oto:#5F4A96;--gen:#0E7C6B;
+  --mfc:#4C7A2E;--cha:#B0577C;--ec:#7A5AA8;--viv:#8A7A2E;--aval:#B23A2E;--train:#3E7A5E;
+}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:'Public Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px 80px}
+header.mast{border-bottom:1.5px solid var(--ink);padding:24px 0 0;margin-bottom:22px}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);margin:0 0 6px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(26px,4.6vw,38px);line-height:1;letter-spacing:-.03em;margin:0 0 14px}
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap}
+nav.tabs button{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  background:none;border:none;border-bottom:2.5px solid transparent;color:var(--sage);padding:9px 14px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink);font-weight:600}
+.view{display:none}.view.on{display:block}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:7px;margin-bottom:16px;flex-wrap:wrap}
+.sec-head h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:20px;margin:0}
+.sec-head p{margin:0;color:var(--sage);font-size:13px;flex:1 1 200px}
+button.act{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--ink);color:var(--paper-2);border:1px solid var(--ink);padding:7px 12px;cursor:pointer}
+button.act:hover{background:#000}
+button.act.ghost{background:none;color:var(--ink-soft);border-color:var(--rule)}
+button.act.ghost:hover{color:var(--ink);border-color:var(--ink)}
+:focus-visible{outline:2px solid var(--go);outline-offset:2px}
+input[type=text],select,textarea{font-family:'Public Sans',sans-serif;font-size:14px;padding:8px 10px;border:1px solid var(--rule);background:#fff;color:var(--ink);width:100%}
+textarea{resize:vertical;min-height:52px}
+.status{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--sage);letter-spacing:.06em}
+.empty{color:var(--sage);font-style:italic;padding:18px 0;border-top:1px solid var(--rule)}
+
+/* ---------- FOCO ---------- */
+.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.pick button{text-align:left;background:var(--paper-2);border:1px solid var(--rule);padding:16px;cursor:pointer;font-family:inherit}
+.pick button:hover{border-color:var(--ink)}
+.pick .pn{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:18px;display:block}
+.pick .pd{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);display:block;margin:4px 0 8px}
+.pick .pl{font-size:12.5px;color:var(--ink-soft);display:block}
+.pick .bar{height:4px;margin-bottom:12px}
+.stage{background:var(--paper-2);border:1px solid var(--ink);padding:0;overflow:hidden}
+.stage .top{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;border-bottom:1px solid var(--rule);flex-wrap:wrap;gap:8px}
+.stage .top .fm{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage)}
+.dots{display:flex;gap:5px}
+.dots i{width:22px;height:4px;background:var(--rule);display:block}
+.dots i.done{background:var(--sage)}.dots i.now{background:var(--ink)}
+.stage .body{padding:34px 24px 30px;text-align:center}
+.clock{font-family:'IBM Plex Mono',monospace;font-size:clamp(58px,13vw,104px);font-weight:600;line-height:.9;letter-spacing:-.03em;margin:0}
+.clock.low{color:var(--aval)}
+.stepn{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage);margin:14px 0 4px}
+.steph{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:clamp(22px,4vw,32px);letter-spacing:-.02em;margin:0 0 10px}
+.stepd{max-width:52ch;margin:0 auto;color:var(--ink-soft);font-size:15px}
+.stepq{max-width:52ch;margin:16px auto 0;text-align:left;background:#fff;border:1px solid var(--rule);padding:12px 14px}
+.stepq p{margin:0 0 6px;font-size:14px}
+.stepq p:last-child{margin:0}
+.ctr{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 18px 20px}
+.paused{opacity:.45}
+.done-card{text-align:center;padding:40px 20px}
+.done-card h3{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;margin:0 0 8px}
+
+/* ---------- CAPTURA ---------- */
+.cap-form{background:var(--paper-2);border:1px solid var(--rule);padding:16px;margin-bottom:20px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.row>*{flex:1 1 180px}
+.qline{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.qline span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--sage);width:16px}
+.hint{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--sage);margin:2px 0 8px}
+.today-aulas{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.today-aulas button{font-family:'IBM Plex Mono',monospace;font-size:10.5px;border:1px solid var(--rule);background:#fff;padding:5px 8px;cursor:pointer;color:var(--ink-soft)}
+.today-aulas button:hover{border-color:var(--ink);color:var(--ink)}
+
+/* ---------- RÉGUA / listas ---------- */
+.topic{border-top:1px solid var(--rule);padding:11px 0}
+.thead{display:grid;grid-template-columns:1fr 250px auto;gap:14px;align-items:center}
+.t-title{font-weight:500;display:block;overflow-wrap:anywhere;cursor:pointer}
+.t-meta{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--sage);display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.t-area{font-weight:600}
+.t-area.go{color:var(--go)}.t-area.ped{color:var(--ped)}.t-area.oft{color:var(--oft)}
+.t-area.oto{color:var(--oto)}.t-area.gen{color:var(--gen)}.t-area.mfc{color:var(--mfc)}.t-area.cha{color:var(--cha)}
+.t-prio{border:1px solid var(--rule);padding:0 4px}
+.t-prio.ess{border-color:var(--ink);color:var(--ink)}
+.t-cum{border:1px solid var(--cha);color:var(--cha);padding:0 4px}
+.track{position:relative;height:32px}
+.track .line{position:absolute;left:0;right:0;top:15px;height:1px;background:var(--rule)}
+.track .fill{position:absolute;left:0;top:14.5px;height:2px;background:var(--ink)}
+.tick{position:absolute;top:8px;transform:translateX(-50%);text-align:center}
+.tick .dot{width:9px;height:9px;border:1.5px solid var(--rule);background:var(--paper);border-radius:50%;margin:0 auto}
+.tick .lab{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--sage);margin-top:3px;display:block}
+.tick.done .dot{background:var(--ink);border-color:var(--ink)}
+.tick.due .dot{background:var(--aval);border-color:var(--aval);animation:pl 1.9s ease-in-out infinite}
+.tick.due .lab{color:var(--aval)}
+@keyframes pl{0%,100%{box-shadow:0 0 0 0 rgba(178,58,46,.45)}50%{box-shadow:0 0 0 5px rgba(178,58,46,0)}}
+@media (prefers-reduced-motion:reduce){.tick.due .dot{animation:none}}
+.t-act{display:flex;gap:6px}
+.detail{background:var(--paper-2);border:1px solid var(--rule);padding:12px 14px;margin-top:9px}
+.detail ol{margin:0 0 10px;padding-left:20px}
+.detail li{margin-bottom:5px;font-size:14px}
+.detail .hint{margin-bottom:6px}
+
+/* ---------- semana ---------- */
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.range{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-soft)}
+.tema{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--ink);padding:3px 8px}
+.pday{border-top:1px solid var(--rule);padding:10px 0 12px;display:grid;grid-template-columns:100px 1fr;gap:14px}
+.pday.is-today{background:linear-gradient(90deg,rgba(19,30,28,.05),transparent 60%)}
+.pd-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);padding-top:2px}
+.pd-label b{color:var(--ink);display:block;font-size:12px}
+.blk{background:var(--paper-2);border-left:3px solid var(--sage);padding:6px 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px}
+.blk .hh{font-family:'IBM Plex Mono',monospace;font-size:11px;min-width:80px}
+.blk .tt{flex:1 1 200px;font-size:14px}
+.blk .kk{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage)}
+.blk button.add{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--rule);background:none;color:var(--sage);padding:2px 6px;cursor:pointer}
+.blk button.add:hover{border-color:var(--ink);color:var(--ink)}
+.blk button.add.done{background:var(--ink);color:var(--paper-2);cursor:default}
+.b-go{border-color:var(--go)}.b-ped{border-color:var(--ped)}.b-oft{border-color:var(--oft)}
+.b-oto{border-color:var(--oto)}.b-gen{border-color:var(--gen)}.b-mfc{border-color:var(--mfc)}
+.b-cha{border-color:var(--cha)}.b-ec{border-color:var(--ec)}.b-viv{border-color:var(--viv)}
+.b-aval{border-color:var(--aval)}.b-feriado{border-color:var(--rule);font-style:italic;color:var(--sage)}
+.exams{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:20px}
+.exam{background:var(--paper-2);border:1px solid var(--rule);border-top:3px solid var(--aval);padding:9px 11px}
+.exam .cd{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;line-height:1}
+.exam .cd small{font-size:10px;font-weight:400;color:var(--sage)}
+.exam .en{font-weight:500;margin-top:4px;font-size:13.5px}
+.exam .ed{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--sage);text-transform:uppercase;margin-top:2px}
+.alert{background:#fff;border:1px solid var(--aval);border-left-width:3px;padding:10px 13px;margin-bottom:16px;font-size:13.5px}
+@media (max-width:820px){.thead{grid-template-columns:1fr;gap:8px}.pday{grid-template-columns:1fr;gap:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Unichristus · 5º semestre · 2026.2</p>
+  <h1>Estúdio de estudo</h1>
+  <nav class="tabs" id="tabs">
+    <button data-v="foco" aria-selected="true">Foco</button>
+    <button data-v="pre" aria-selected="false">Pré-aula</button>
+    <button data-v="captura" aria-selected="false">Captura</button>
+    <button data-v="regua" aria-selected="false">Régua</button>
+    <button data-v="semana" aria-selected="false">Semana</button>
+  </nav>
+</header>
+
+<!-- FOCO -->
+<div class="view on" id="v-foco">
+  <div id="focoPick">
+    <div class="sec-head"><h2>Escolher a noite</h2><p>Uma instrução por vez, com o tempo rodando. Você não decide nada durante a sessão.</p></div>
+    <div class="pick" id="pick"></div>
+    <p class="hint" style="margin-top:14px">A sessão continua rodando se você trocar de aba aqui dentro.</p>
+  </div>
+  <div class="stage" id="stage" style="display:none">
+    <div class="top">
+      <span class="fm" id="fmName"></span>
+      <span class="dots" id="dots"></span>
+    </div>
+    <div class="body">
+      <p class="clock" id="clock">00:00</p>
+      <p class="stepn" id="stepn"></p>
+      <h3 class="steph" id="steph"></h3>
+      <p class="stepd" id="stepd"></p>
+      <div class="stepq" id="stepq" style="display:none"></div>
+    </div>
+    <div class="ctr">
+      <button class="act" id="bPause">Pausar</button>
+      <button class="act ghost" id="bPlus">+5 min</button>
+      <button class="act ghost" id="bSkip">Pronto, próximo</button>
+      <button class="act ghost" id="bStop">Encerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRÉ-AULA -->
+<div class="view" id="v-pre">
+  <div class="sec-head"><h2>Pré-aula</h2><p>Domingo à noite, 40 min. Não é aprender o conteúdo — é montar o andaime e chegar com dúvida boa.</p></div>
+  <div class="cap-form">
+    <div class="row">
+      <select id="pTipo">
+        <option value="cha">CHA — mapa da estação</option>
+        <option value="tut">Tutoria — objetivos</option>
+        <option value="mon">Monitoria — eu ensinando</option>
+      </select>
+      <input type="text" id="pTitle" placeholder="Ex.: CHA rodízio — Obstetrícia · 03/08">
+    </div>
+    <div id="pFields"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="act" id="bSavePre">Salvar preparação</button>
+      <button class="act ghost" id="bClearPre">Limpar</button>
+      <span class="status" id="preStat"></span>
+    </div>
+  </div>
+  <div class="sec-head"><h2>Preparações salvas</h2><p>Toque no título para abrir e reler em voz alta antes de sair de casa.</p></div>
+  <div id="preList"></div>
+</div>
+
+<!-- CAPTURA -->
+<div class="view" id="v-captura">
+  <div class="sec-head"><h2>Captura</h2><p>Saindo da sala. Cinco perguntas, sem responder nenhuma.</p></div>
+  <div class="cap-form">
+    <p class="hint">Aulas de hoje — toque para preencher</p>
+    <div class="today-aulas" id="todayAulas"></div>
+    <div class="row">
+      <input type="text" id="cTitle" placeholder="Assunto da aula">
+      <select id="cArea"></select>
+      <select id="cTrilha">
+        <option value="bloco">Trilha de bloco (arquiva)</option>
+        <option value="cum">Cumulativa — CHA, vivência, semiologia</option>
+      </select>
+    </div>
+    <p class="hint">2 de reconhecimento · 2 de conduta · 1 de mecanismo</p>
+    <div id="qFields"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="act" id="bSaveCap">Salvar e mandar para a régua</button>
+      <button class="act ghost" id="bClearCap">Limpar</button>
+      <span class="status" id="capStat"></span>
+    </div>
+  </div>
+  <div class="sec-head"><h2>Capturadas hoje</h2><p></p></div>
+  <div id="capHoje"></div>
+</div>
+
+<!-- RÉGUA -->
+<div class="view" id="v-regua">
+  <div class="sec-head"><h2>Régua de revisão</h2><p>Toque no título para ver as perguntas e anotar erros.</p></div>
+  <div id="debt"></div>
+  <div id="topics"></div>
+  <div class="cap-form" style="margin-top:26px">
+    <p class="hint" style="margin-top:0">Cópia de segurança</p>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 10px">Baixe o backup uma vez por semana, no domingo, junto com o planejamento. É um arquivo pequeno que guarda toda a régua e todas as perguntas capturadas.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="act" id="bExp">Baixar backup</button>
+      <button class="act ghost" id="bImp">Restaurar backup</button>
+      <input type="file" id="fImp" accept="application/json" style="display:none">
+      <span class="status" id="bkStat"></span>
+    </div>
+  </div>
+</div>
+
+<!-- SEMANA -->
+<div class="view" id="v-semana">
+  <div class="sec-head"><h2>Próximas avaliações</h2><p></p></div>
+  <div class="exams" id="exams"></div>
+  <div class="bar">
+    <button class="act ghost" id="prevW">←</button><span class="range" id="range"></span>
+    <button class="act ghost" id="nextW">→</button><button class="act ghost" id="nowW">hoje</button>
+    <span class="tema" id="tema"></span><span class="status" id="stat"></span>
+  </div>
+  <div id="plan"></div>
+</div>
+
+</div>
+
+<script>
+const AREAS={go:'GO',ped:'Pediatria',oft:'Oftalmo',oto:'Otorrino',gen:'Genética',
+  mfc:'MFC',cha:'CHA',ec:'Extensão',viv:'Vivência',aval:'Avaliação',feriado:'Feriado'};
+const CAPTURAVEL=['go','ped','oft','oto','gen','mfc','cha','viv'];
+const CUMULATIVA=['cha','viv'];
+const DAYN=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+const SLOTS=[[460,560],[580,680],[820,920],[940,1040]];
+const KEY='estudio:v1';
+const STG={bloco:[1,7,30],cum:[1,7,21]};
+
+const SEM=[
+['2026-07-27','Ginecologia e Obstetrícia',[[],
+ [[0,'Semiologia oftalmológica','oft'],[1,'Introdução à pediatria','ped'],[2,'Anovulação crônica: SOP e câncer de endométrio','go'],[3,'Fisiologia da audição e do equilíbrio','oto']],
+ [[2,'Vulvovaginites','go'],[3,'Anatomia e fisiologia da visão','oft']],
+ [[0,'Patologia dos nódulos mamários','go','LAB'],[2,'Rotura anteparto de membranas e prematuridade','go'],[3,'A consulta otorrinolaringológica','oto']],
+ [[0,'Políticas públicas de saúde da mulher','mfc'],[1,'Atendimento à mulher e à criança surda','mfc']],
+ [[0,'Interpretação dos exames pré-natal','go'],[1,'Repercussões da gravidez no organismo materno','go']],[]]],
+['2026-08-03','Ginecologia e Obstetrícia',[
+ [[0,'CHA rodízio — Obstetrícia','cha'],[1,'CHA rodízio — Obstetrícia','cha'],[2,'Ética no atendimento a adolescentes e mulheres','mfc'],[3,'Libras na saúde da criança','mfc']],
+ [[0,'Citogenética clássica e molecular','gen'],[1,'Sangramento uterino anormal e miomas','go']],
+ [[0,'Colpocitologia oncótica e microscopia vaginal','go','LAB'],[1,'HPV e câncer de colo','go'],[2,'Cervicites e DIP','go'],[3,'Mamografia, US e RM mamária','go','LAB']],
+ [[2,'Contracepção','go'],[3,'Diabetes gestacional','go']],
+ [[0,'Apresentação do projeto de EC','ec'],[1,'Preparação de EC por grupo','ec']],[],[]]],
+['2026-08-10','Ginecologia e Obstetrícia',[
+ [[0,'CHA rodízio — Pediatria','cha'],[1,'CHA rodízio — Pediatria','cha'],[2,'Comunicação e cuidado: mulher surda','mfc'],[3,'SUS: planejamento familiar na APS','mfc']],[],
+ [[0,'Teratologia e dismorfologia','gen'],[1,'Hemorragias da primeira metade da gestação','go'],[2,'USG obstétrica','go','LAB'],[3,'USG da pelve e histerossalpingografia','go','LAB']],
+ [],[[-1,'Feriado — Dia do Estudante','feriado']],[],[]]],
+['2026-08-17','Ginecologia e Obstetrícia',[
+ [[0,'CHA rodízio — Otorrinolaringologia','cha'],[1,'CHA rodízio — Otorrinolaringologia','cha']],
+ [[0,'Vivência — Obstetrícia','viv'],[1,'Vivência — Obstetrícia','viv']],
+ [[1,'Somativa 1 Teórica 1 (S1T1)','aval'],[2,'Exames genéticos do pré-natal','gen'],[3,'Fisiologia e mecanismo do parto cefálico','go']],[],
+ [[0,'Pré-natal de baixo risco e calendário vacinal','mfc'],[1,'Cuidados puerperais na APS','mfc'],[2,'Vivência — Pediatria','viv'],[3,'Vivência — Pediatria','viv']],[],[]]],
+['2026-08-24','Ginecologia e Obstetrícia',[
+ [[0,'CHA rodízio — Oftalmologia','cha'],[1,'CHA rodízio — Oftalmologia','cha']],
+ [[2,'Vivência — Otorrinolaringologia','viv'],[3,'Vivência — Otorrinolaringologia','viv']],
+ [[0,'Aconselhamento genético','gen'],[1,'Endometriose e dor pélvica crônica','go'],[2,'Assistência ao parto e puerpério','go'],[3,'Amenorreia primária e distúrbios da puberdade','go']],[],
+ [[0,'Extensão curricular 1','ec'],[1,'Extensão curricular 1','ec']],
+ [[0,'Hemorragias da segunda metade da gestação','go'],[1,'Genética da infertilidade','gen']],[]]],
+['2026-08-31','Ginecologia e Obstetrícia',[
+ [[0,'CHA rodízio — Ginecologia','cha'],[1,'CHA rodízio — Ginecologia','cha']],[],
+ [[0,'Diagnóstico diferencial das queixas mamárias','go'],[1,'Síndromes hipertensivas na gestação','go'],[2,'Teste do Progresso','aval'],[3,'Teste do Progresso','aval']],[],
+ [[0,'Saúde da criança na APS (PNAISC)','mfc'],[1,'Aleitamento materno e alimentação complementar','mfc']],[],[]]],
+['2026-09-07','Ginecologia e Obstetrícia',[
+ [[-1,'Feriado — Independência','feriado']],
+ [[2,'Vivência — Ginecologia','viv'],[3,'Vivência — Ginecologia','viv']],
+ [[0,'Amenorreia secundária','go'],[1,'Avaliação da vitalidade fetal','go'],[2,'Infertilidade','go'],[3,'Síndrome climatérica','go']],[],
+ [[0,'Extensão curricular 2','ec'],[1,'Extensão curricular 2','ec']],
+ [[1,'Somativa 1 — MFC (AS1M)','aval']],[]]],
+['2026-09-14','Ginecologia e Obstetrícia',[
+ [[0,'Somativa 1 Prática 1 (S1P1)','aval'],[3,'Formativa 1 Caso Integrador (AF1C)','aval']],[],
+ [[1,'Somativa 1 Teórica 2 (S1T2)','aval']],
+ [[0,'Formativa 1 Semiologia + OSCE (AS1C)','aval'],[1,'Somativa 1 CHA OSCE (AS1C)','aval']],
+ [[0,'Crescimento e desenvolvimento infantil na APS','mfc'],[1,'Puericultura e imunização na APS','mfc']],[],[]]],
+['2026-09-21','Pediatria',[
+ [[0,'CHA rodízio — Obstetrícia','cha'],[1,'CHA rodízio — Obstetrícia','cha'],[2,'Exame físico do RN','ped'],[3,'Sepse e meningite neonatal','ped']],
+ [[2,'Vivência — Oftalmologia','viv'],[3,'Vivência — Oftalmologia','viv']],
+ [[0,'Icterícia neonatal','ped'],[1,'Triagem neonatal','ped'],[2,'Erros inatos do metabolismo','gen'],[3,'Doenças cromossômicas mais comuns','gen']],
+ [[2,'Distúrbios respiratórios do RN','ped'],[3,'Cardiopatias congênitas','ped']],
+ [[0,'Extensão curricular 3','ec'],[1,'Extensão curricular 3','ec']],[],[]]],
+['2026-09-28','Pediatria',[
+ [[0,'CHA rodízio — Pediatria','cha'],[1,'CHA rodízio — Pediatria','cha']],[],
+ [[0,'Diagnóstico por imagem na pediatria','ped','LAB'],[1,'Pneumonia','ped'],[2,'Doenças exantemáticas','ped'],[3,'Bronquiolite viral aguda','ped']],[],
+ [[0,'Desenvolvimento infantil na APS','mfc'],[1,'Saúde de adolescentes e jovens na APS','mfc']],
+ [[0,'Baixo peso e baixa estatura','ped'],[1,'Sequenciamento genético','gen']],[]]],
+['2026-10-05','Pediatria',[
+ [[0,'CHA rodízio — Otorrinolaringologia','cha'],[1,'CHA rodízio — Otorrinolaringologia','cha']],
+ [[2,'Vivência — Otorrinolaringologia','viv'],[3,'Vivência — Otorrinolaringologia','viv']],
+ [[0,'Constipação intestinal','ped'],[1,'Infecção do trato urinário','ped'],[2,'Parasitoses intestinais','ped','LAB'],[3,'Hepatoesplenomegalia e leishmaniose visceral','ped','LAB']],[],
+ [[0,'Extensão curricular 4','ec'],[1,'Extensão curricular 4','ec']],[],[]]],
+['2026-10-12','Pediatria',[
+ [[-1,'Feriado — N. Sra. Aparecida','feriado']],[[-1,'Feriado — Dia do Professor','feriado']],
+ [[0,'Somativa 2 Teórica 1 (S2T1)','aval'],[2,'Síndrome nefrítica e nefrótica','ped'],[3,'Desnutrição e desvitaminoses','ped']],[],
+ [[0,'Oficina de relato (EC)','ec'],[1,'Oficina de relato (EC)','ec']],
+ [[0,'Artrite idiopática juvenil','ped'],[1,'Distúrbios da diferenciação sexual','gen']],[]]],
+['2026-10-19','Pediatria',[
+ [[0,'CHA rodízio — Oftalmologia','cha'],[1,'CHA rodízio — Oftalmologia','cha']],
+ [[2,'Vivência prática de Libras','mfc'],[3,'Vivência prática de Libras','mfc']],
+ [[0,'Diagnóstico precoce do CE infantil','ped'],[1,'Emergências pediátricas','ped'],[2,'Infecções de vias aéreas superiores','ped'],[3,'Obesidade','ped']],[],
+ [[0,'Infância e adolescência na APS','mfc'],[1,'Programa Saúde na Escola','mfc']],
+ [[0,'Sepse e sepse grave em pediatria','ped','LAB'],[1,'Radiologia dos distúrbios respiratórios','ped','LAB']],[]]],
+['2026-10-26','Pediatria',[
+ [[0,'CHA rodízio — Ginecologia','cha'],[1,'CHA rodízio — Ginecologia','cha']],
+ [[0,'Vivência — Obstetrícia','viv'],[1,'Vivência — Obstetrícia','viv']],
+ [[1,'Somativa 2 Prática 1 (S2P1)','aval'],[2,'Febre reumática','ped'],[3,'Diarreia aguda e desidratação','ped']],
+ [[3,'Formativa 2 Caso Integrador (AF2C)','aval']],
+ [[0,'Extensão curricular 5','ec'],[1,'Extensão curricular 5','ec']],[],[]]],
+['2026-11-02','Pediatria',[
+ [[-1,'Feriado — Finados','feriado']],
+ [[2,'Vivência — Oftalmologia','viv'],[3,'Vivência — Oftalmologia','viv']],
+ [[1,'Somativa 2 — MFC (AS2M)','aval']],
+ [[0,'Formativa 2 Semiologia + OSCE (AS2C)','aval'],[1,'Somativa 2 CHA OSCE (AS2C)','aval']],
+ [[0,'Determinantes socioambientais da saúde','mfc'],[1,'Olho vermelho na APS','mfc']],
+ [[1,'Somativa 2 Teórica 2 (S2T2)','aval']],[]]],
+['2026-11-09','Oftalmologia e Otorrinolaringologia',[
+ [[0,'CHA rodízio — Obstetrícia','cha'],[1,'CHA rodízio — Obstetrícia','cha'],[2,'Fundo de olho e exames complementares','oft','LAB'],[3,'Anatomia e histologia da orelha','oto','LAB']],[],
+ [[0,'Afecções da audição e equilíbrio','oto'],[1,'Doenças da retina e vítreo','oft'],[2,'Óptica clínica e cirúrgica','oft'],[3,'Manifestações oculares nas doenças sistêmicas','oft']],
+ [[2,'Predisposição hereditária ao câncer','gen'],[3,'Genodermatoses','gen']],
+ [[0,'Extensão curricular 6','ec'],[1,'Extensão curricular 6','ec'],[2,'Vivência — Ginecologia','viv'],[3,'Vivência — Ginecologia','viv']],
+ [[0,'Doenças externas e córnea','oft'],[1,'Otites externas','oto']],[]]],
+['2026-11-16','Oftalmologia e Otorrinolaringologia',[
+ [[0,'CHA rodízio — Pediatria','cha'],[1,'CHA rodízio — Pediatria','cha']],[],
+ [[0,'Otite média aguda','oto'],[1,'Oftalmopediatria e estrabismo','oft'],[2,'Perdas auditivas condutivas','oto'],[3,'Glaucoma','oft']],[],
+ [[-1,'Feriado — Consciência Negra','feriado']],[],[]]],
+['2026-11-23','Oftalmologia e Otorrinolaringologia',[
+ [[0,'CHA rodízio — Otorrinolaringologia','cha'],[1,'CHA rodízio — Otorrinolaringologia','cha']],[],
+ [[0,'Otites médias crônicas','oto'],[1,'Trauma e urgências em oftalmologia','oft'],[2,'TEA na APS','mfc'],[3,'Saúde auditiva na APS','mfc']],[],
+ [[0,'Preparação para a Mostra da EC','ec'],[1,'Preparação para a Mostra da EC','ec'],[2,'Vivência — Pediatria','viv'],[3,'Vivência — Pediatria','viv']],
+ [[0,'Doenças da órbita','oft','LAB'],[1,'Exames de imagem em otorrino','oto','LAB']],[]]],
+['2026-11-30','Oftalmologia e Otorrinolaringologia',[
+ [[0,'CHA rodízio — Oftalmologia','cha'],[1,'CHA rodízio — Oftalmologia','cha']],[],
+ [[1,'Somativa 3 Teórica 1 (S3T1)','aval'],[2,'Farmacologia em otorrinolaringologia','oto','LAB'],[3,'Farmacologia ocular','oft','LAB']],[],
+ [[0,'Mostra da EC','ec'],[1,'Mostra da EC','ec']],
+ [[0,'Displasias esqueléticas e tecido conectivo','gen'],[1,'Perdas auditivas neurossensoriais','oto']],[]]],
+['2026-12-07','Oftalmologia e Otorrinolaringologia',[
+ [[0,'CHA rodízio — Ginecologia','cha'],[1,'CHA rodízio — Ginecologia','cha']],[],
+ [[0,'Neuroftalmologia','oft'],[1,'Vestibulopatias periféricas','oto'],[2,'Neurogenética','gen'],[3,'Reabilitação auditiva','oto']],[],
+ [[0,'Saúde ocular na APS','mfc'],[1,'Tontura na APS','mfc']],
+ [[1,'Somativa 3 Prática 1 (S3P1)','aval']],[]]],
+['2026-12-14','Oftalmologia e Otorrinolaringologia',[
+ [[0,'Somativa 3 — MFC (AS3M)','aval'],[3,'Formativa 3 Caso Integrador (AF3C)','aval']],[],
+ [[2,'Somativa 3 Teórica 2 (S3T2)','aval'],[3,'Somativa 3 Teórica 2 (S3T2)','aval']],
+ [[0,'Formativa 3 Semiologia + OSCE (AS3C)','aval'],[1,'Somativa 3 CHA OSCE (AS3C)','aval']],
+ [],[],[]]]
+];
+
+/* ---------- formatos de sessão ---------- */
+const FORMATOS={
+ curta:{nome:'Noite curta',dur:'60 min',cor:'var(--aval)',
+  quando:'Dia cheio, monitoria ou treino pesado. Não abre material novo.',
+  passos:[
+   {m:20,h:'Captura das aulas de hoje',d:'Cinco perguntas por aula, sem responder nenhuma. Se já capturou no corredor, use este tempo para passar tudo para a aba Captura.',tipo:'cap'},
+   {m:20,h:'Vencidos da régua',d:'Só o que está em vermelho. Responda de cabeça as cinco perguntas de cada um.',tipo:'due'},
+   {m:20,h:'15 questões do bloco vigente',d:'Erro que você não entendeu: anote no item da régua e mande para o Claude depois.'}
+  ]},
+ padrao:{nome:'Noite padrão',dur:'2 h',cor:'var(--go)',
+  quando:'O formato da maioria dos dias.',
+  passos:[
+   {m:20,h:'Captura das aulas de hoje',d:'Cinco perguntas por aula. Reconhecimento, conduta, mecanismo.',tipo:'cap'},
+   {m:10,h:'Esqueleto fechado',d:'Escolha UM assunto do bloco vigente. Papel em branco, nada aberto. Escreva tudo que lembra. Vai sair pouco — é esse o ponto.'},
+   {m:20,h:'Correção seletiva',d:'Agora abra o slide ou o resumo, e corrija SÓ onde faltou. Caneta de outra cor. O que você acertou de memória não precisa ser relido.'},
+   {m:5,h:'Responder as cinco perguntas',d:'De cabeça. As que travarem são exatamente o que entra no D+1.',tipo:'q'},
+   {m:20,h:'Vencidos da régua',d:'O que está em vermelho. Comece pelos essenciais.',tipo:'due'},
+   {m:30,h:'20 questões + registro dos erros',d:'Anote o conceito que você confundiu, não só a alternativa errada.'},
+   {m:15,h:'Fechar o dia',d:'Atualize a régua, mande os erros para o Claude, e escreva a única coisa que não pode falhar amanhã.'}
+  ]},
+ longa:{nome:'Noite longa',dur:'3 h',cor:'var(--train)',
+  quando:'Terça, quinta e fim de semana.',
+  passos:[
+   {m:20,h:'Captura e atualização da régua',d:'Cinco perguntas por aula do dia e conferir o que venceu.',tipo:'cap'},
+   {m:10,h:'Esqueleto — assunto 1',d:'Papel em branco, nada aberto.'},
+   {m:20,h:'Correção — assunto 1',d:'Só os buracos, em outra cor.'},
+   {m:5,h:'Cinco perguntas — assunto 1',d:'De cabeça.',tipo:'q'},
+   {m:10,h:'Esqueleto — assunto 2',d:'Mesmo processo, segundo assunto do bloco.'},
+   {m:20,h:'Correção — assunto 2',d:'Só os buracos.'},
+   {m:5,h:'Cinco perguntas — assunto 2',d:'De cabeça.',tipo:'q'},
+   {m:20,h:'Uma estação de CHA em voz alta',d:'Cronometrada no tempo real da prova. Grave no celular. Depois passe o checklist: apresentação, anamnese, exame físico, hipótese, comunicação, fechamento.',tipo:'cum'},
+   {m:40,h:'30 questões mistas',d:'Bloco vigente + fio transversal (genética, MFC, a área que não é o tema).'},
+   {m:30,h:'Gabarito dos erros e áudio',d:'Mande os erros para o Claude. Deixe o áudio do NotebookLM pronto para ouvir amanhã no trajeto.'}
+  ]}
+};
+
+let state={topics:[],preps:[],cfg:{}};
+let wi=0, sess=null, tick=null;
+
+const ymd=d=>d.toISOString().slice(0,10);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const parse=s=>new Date(s+'T12:00:00');
+const dayDiff=(a,b)=>Math.round((parse(b)-parse(a))/86400000);
+const today=()=>ymd(new Date(new Date().setHours(12,0,0,0)));
+const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+
+function currentWeek(){let i=0;SEM.forEach((w,j)=>{if(dayDiff(w[0],today())>=0)i=j});return i}
+function stagesOf(t){return STG[t.trilha||'bloco']}
+function temaAreas(tema){return tema.startsWith('Gine')?['go']:tema.startsWith('Ped')?['ped']:['oft','oto']}
+
+let saveT=null;
+const temStorage=typeof window.storage!=='undefined'&&window.storage;
+function flag(id,t){const e=document.getElementById(id);if(!e)return;e.textContent=t;if(t)setTimeout(()=>{if(e.textContent===t)e.textContent=''},1800)}
+function save(){clearTimeout(saveT);saveT=setTimeout(async()=>{
+  const dados=JSON.stringify(state);
+  let ok=false;
+  if(temStorage){try{ok=!!await window.storage.set(KEY,dados)}catch(e){}}
+  if(!ok){try{localStorage.setItem(KEY,dados);ok=true}catch(e){}}
+  flag('stat',ok?'salvo':'não salvou');flag('capStat',ok?'salvo':'não salvou');
+},350)}
+async function load(){
+  if(temStorage){
+    try{const r=await window.storage.get(KEY);if(r&&r.value){Object.assign(state,JSON.parse(r.value));return}}catch(e){}
+  }
+  try{const l=localStorage.getItem(KEY);if(l)Object.assign(state,JSON.parse(l))}catch(e){}
+}
+function exportar(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='estudio-backup-'+today()+'.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function importar(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(!d.topics)throw 0;
+      state.topics=d.topics;state.preps=d.preps||[];state.cfg=d.cfg||{};
+      save();renderTopics();renderCapHoje();renderPlan();renderPreList();
+      flag('bkStat','restaurado');
+    }catch(e){flag('bkStat','arquivo inválido')}
+  };
+  r.readAsText(file);
+}
+
+/* ---------- abas ---------- */
+document.getElementById('tabs').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  [...document.querySelectorAll('#tabs button')].forEach(x=>x.setAttribute('aria-selected',x===b));
+  [...document.querySelectorAll('.view')].forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+};
+
+/* ---------- FOCO ---------- */
+function renderPick(){
+  const h=document.getElementById('pick');h.innerHTML='';
+  Object.entries(FORMATOS).forEach(([k,f])=>{
+    const b=document.createElement('button');
+    b.innerHTML=`<div class="bar" style="background:${f.cor}"></div>
+      <span class="pn">${f.nome}</span><span class="pd">${f.dur} · ${f.passos.length} passos</span>
+      <span class="pl">${f.quando}</span>`;
+    b.onclick=()=>startSession(k);
+    h.appendChild(b);
+  });
+}
+function startSession(k){
+  const f=FORMATOS[k];
+  sess={k,i:0,left:f.passos[0].m*60,paused:false};
+  document.getElementById('focoPick').style.display='none';
+  document.getElementById('stage').style.display='block';
+  document.getElementById('fmName').textContent=f.nome+' · '+f.dur;
+  renderStep();
+  clearInterval(tick);
+  tick=setInterval(()=>{
+    if(!sess||sess.paused)return;
+    sess.left--;
+    if(sess.left<=0){chime();nextStep();return}
+    paintClock();
+  },1000);
+}
+function chime(){
+  try{
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g);g.connect(ac.destination);o.frequency.value=660;
+    g.gain.setValueAtTime(.12,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.7);
+    o.start();o.stop(ac.currentTime+.7);
+  }catch(e){}
+}
+function paintClock(){
+  const c=document.getElementById('clock');
+  c.textContent=mmss(Math.max(0,sess.left));
+  c.classList.toggle('low',sess.left<=60);
+}
+function renderStep(){
+  const f=FORMATOS[sess.k],p=f.passos[sess.i];
+  paintClock();
+  document.getElementById('stepn').textContent=`passo ${sess.i+1} de ${f.passos.length} · ${p.m} min`;
+  document.getElementById('steph').textContent=p.h;
+  document.getElementById('stepd').textContent=p.d;
+  const dots=document.getElementById('dots');dots.innerHTML='';
+  f.passos.forEach((_,j)=>{
+    const i2=document.createElement('i');
+    i2.className=j<sess.i?'done':j===sess.i?'now':'';
+    dots.appendChild(i2);
+  });
+  const q=document.getElementById('stepq');
+  q.style.display='none';q.innerHTML='';
+  if(p.tipo==='due'){
+    const d=dueList();
+    if(d.length){
+      q.style.display='block';
+      q.innerHTML='<p style="font-family:IBM Plex Mono,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage)">Vencidos agora</p>'
+        +d.slice(0,8).map(t=>`<p>· ${esc(t.title)} <span style="color:var(--sage);font-size:12px">(${AREAS[t.area]})</span></p>`).join('');
+    }
+  }
+  if(p.tipo==='q'){
+    const cands=state.topics.filter(t=>t.qs&&t.qs.length&&dayDiff(t.created||t.due,today())>=-1).slice(0,1);
+    const t=cands[0]||state.topics.filter(t=>t.qs&&t.qs.length).slice(-1)[0];
+    if(t){
+      q.style.display='block';
+      q.innerHTML=`<p style="font-family:IBM Plex Mono,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage)">${esc(t.title)}</p>`
+        +t.qs.filter(Boolean).map((s,i)=>`<p>${i+1}. ${esc(s)}</p>`).join('');
+    }
+  }
+  if(p.tipo==='cum'){
+    const c=state.topics.filter(t=>t.trilha==='cum');
+    if(c.length){
+      q.style.display='block';
+      q.innerHTML='<p style="font-family:IBM Plex Mono,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cha)">Estações disponíveis</p>'
+        +c.slice(0,6).map(t=>`<p>· ${esc(t.title)}</p>`).join('');
+    }
+  }
+  if(p.tipo==='cap'){
+    const a=aulasDoDia();
+    if(a.length){
+      q.style.display='block';
+      q.innerHTML='<p style="font-family:IBM Plex Mono,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage)">Aulas de hoje</p>'
+        +a.map(x=>`<p>· ${esc(x[1])}</p>`).join('');
+    }
+  }
+}
+function nextStep(){
+  const f=FORMATOS[sess.k];
+  if(sess.i>=f.passos.length-1){endSession(true);return}
+  sess.i++;sess.left=f.passos[sess.i].m*60;renderStep();
+}
+function endSession(done){
+  clearInterval(tick);tick=null;
+  const st=document.getElementById('stage');
+  if(done){
+    st.querySelector('.body').innerHTML=`<div class="done-card"><h3>Sessão fechada.</h3>
+      <p style="color:var(--ink-soft);max-width:44ch;margin:0 auto">Confira a régua antes de dormir: o que você estudou hoje já está com data marcada para amanhã.</p></div>`;
+    st.querySelector('.ctr').innerHTML='<button class="act" id="bBack">Voltar</button>';
+    document.getElementById('bBack').onclick=resetFoco;
+  }else resetFoco();
+  sess=null;
+}
+function resetFoco(){
+  clearInterval(tick);tick=null;sess=null;
+  location.reload();
+}
+document.getElementById('bPause').onclick=e=>{
+  sess.paused=!sess.paused;
+  e.target.textContent=sess.paused?'Continuar':'Pausar';
+  document.getElementById('clock').classList.toggle('paused',sess.paused);
+};
+document.getElementById('bPlus').onclick=()=>{sess.left+=300;paintClock()};
+document.getElementById('bSkip').onclick=()=>nextStep();
+document.getElementById('bStop').onclick=()=>endSession(false);
+
+/* ---------- CAPTURA ---------- */
+function aulasDoDia(){
+  const t=today();
+  for(const w of SEM){
+    for(let i=0;i<7;i++){
+      if(ymd(addDays(parse(w[0]),i))===t)
+        return w[2][i].filter(e=>e[0]>=0&&CAPTURAVEL.includes(e[2]));
+    }
+  }
+  return [];
+}
+function renderCapForm(){
+  const sa=document.getElementById('cArea');
+  if(!sa.options.length)
+    Object.keys(AREAS).filter(a=>CAPTURAVEL.includes(a)).forEach(a=>{
+      const o=document.createElement('option');o.value=a;o.textContent=AREAS[a];sa.appendChild(o)});
+  const qf=document.getElementById('qFields');
+  if(!qf.children.length){
+    const dicas=['reconhecimento — critérios, valores, classificação','reconhecimento — o segundo',
+      'conduta — o que faço com este paciente','conduta — quando encaminho ou interno',
+      'mecanismo — por quê'];
+    for(let i=0;i<5;i++){
+      const d=document.createElement('div');d.className='qline';
+      d.innerHTML=`<span>${i+1}</span><input type="text" class="qi" placeholder="${dicas[i]}">`;
+      qf.appendChild(d);
+    }
+  }
+  const ta=document.getElementById('todayAulas');ta.innerHTML='';
+  const aulas=aulasDoDia();
+  if(!aulas.length){ta.innerHTML='<span class="status">Sem aula capturável hoje — preencha manualmente.</span>'}
+  aulas.forEach(a=>{
+    const b=document.createElement('button');
+    b.textContent=a[1];
+    b.onclick=()=>{
+      document.getElementById('cTitle').value=a[1];
+      document.getElementById('cArea').value=a[2];
+      document.getElementById('cTrilha').value=CUMULATIVA.includes(a[2])?'cum':'bloco';
+    };
+    ta.appendChild(b);
+  });
+}
+document.getElementById('bSaveCap').onclick=()=>{
+  const ti=document.getElementById('cTitle');
+  if(!ti.value.trim()){flag('capStat','falta o assunto');return}
+  const qs=[...document.querySelectorAll('.qi')].map(i=>i.value.trim()).filter(Boolean);
+  const trilha=document.getElementById('cTrilha').value;
+  const tema=SEM[currentWeek()][1];
+  const area=document.getElementById('cArea').value;
+  state.topics.push({id:Date.now()+''+Math.random(),area,title:ti.value.trim(),qs,trilha,
+    prio:temaAreas(tema).includes(area)||area==='gen'||trilha==='cum'?'ess':'apr',
+    stage:0,due:ymd(addDays(new Date(),1)),created:today(),erros:''});
+  save();clearCap();renderTopics();renderCapHoje();flag('capStat','na régua');
+};
+function clearCap(){
+  document.getElementById('cTitle').value='';
+  document.querySelectorAll('.qi').forEach(i=>i.value='');
+}
+document.getElementById('bClearCap').onclick=clearCap;
+
+function renderCapHoje(){
+  const h=document.getElementById('capHoje');
+  const t=state.topics.filter(x=>x.created===today());
+  h.innerHTML=t.length?'':'<div class="empty">Nada capturado hoje.</div>';
+  t.forEach(x=>{
+    const d=document.createElement('div');d.className='detail';
+    d.innerHTML=`<p class="hint" style="margin:0 0 6px"><span class="t-area ${x.area}">${AREAS[x.area]}</span> · ${x.trilha==='cum'?'cumulativa':'bloco'}</p>
+      <strong>${esc(x.title)}</strong><ol>${x.qs.map(q=>`<li>${esc(q)}</li>`).join('')}</ol>`;
+    h.appendChild(d);
+  });
+}
+
+/* ---------- RÉGUA ---------- */
+function dueList(){
+  return state.topics.filter(t=>t.stage<stagesOf(t).length&&dayDiff(t.due,today())>=0)
+    .sort((a,b)=>a.prio===b.prio?dayDiff(b.due,today())-dayDiff(a.due,today()):a.prio==='ess'?-1:1);
+}
+function renderTopics(){
+  const h=document.getElementById('topics'),db=document.getElementById('debt');
+  const act=state.topics.filter(t=>t.stage<stagesOf(t).length||t.trilha==='cum');
+  const d=dueList();
+  db.innerHTML=d.length>8
+    ? `<div class="alert"><strong>${d.length} itens vencidos.</strong> Passou do teto de 8 — esta semana é de limpeza. Não capture nada novo como essencial até baixar disso.</div>`
+    : d.length?`<p class="status" style="margin-bottom:12px">${d.length} vencido(s) · teto 8</p>`:'';
+  h.innerHTML='';
+  if(!act.length){h.innerHTML='<div class="empty">Régua vazia. Capture a primeira aula na aba Captura.</div>';return}
+  act.sort((a,b)=>dayDiff(b.due,today())-dayDiff(a.due,today())||(a.prio==='ess'?-1:1));
+  act.forEach(t=>{
+    const ST=stagesOf(t),over=dayDiff(t.due,today()),man=t.stage>=ST.length;
+    const el=document.createElement('div');el.className='topic';
+    el.innerHTML=`<div class="thead">
+      <div><span class="t-title"></span><span class="t-meta">
+        <span class="t-area ${t.area}">${AREAS[t.area]}</span>
+        ${t.trilha==='cum'?'<span class="t-cum">cumulativa</span>':`<span class="t-prio ${t.prio}">${t.prio==='ess'?'essencial':'aprofund.'}</span>`}
+        <span class="t-when"></span>${t.qs&&t.qs.length?'<span>'+t.qs.length+' perguntas</span>':''}</span></div>
+      <div class="track"><div class="line"></div><div class="fill"></div></div>
+      <div class="t-act"><button class="act rev">Revisei</button><button class="act ghost del">✕</button></div></div>`;
+    el.querySelector('.t-title').textContent=t.title;
+    el.querySelector('.t-when').textContent=man?'manutenção 30/30':over>0?`vencido há ${over} d`:over===0?'vence hoje':`em ${-over} d`;
+    const tr=el.querySelector('.track');
+    tr.querySelector('.fill').style.width=(Math.min(t.stage,ST.length)/ST.length*100)+'%';
+    ST.forEach((s,i)=>{
+      const k=document.createElement('div');
+      k.className='tick '+(i<t.stage?'done':(i===t.stage&&over>=0?'due':''));
+      k.style.left=((i+1)/ST.length*100)+'%';
+      k.innerHTML=`<div class="dot"></div><span class="lab">D+${s}</span>`;
+      tr.appendChild(k);
+    });
+    const det=document.createElement('div');det.className='detail';det.style.display='none';
+    det.innerHTML=(t.qs&&t.qs.length
+      ? '<p class="hint">Responda de cabeça, sem abrir nada</p><ol>'+t.qs.map(q=>`<li>${esc(q)}</li>`).join('')+'</ol>'
+      : '<p class="hint">Sem perguntas capturadas neste item</p>')
+      +'<p class="hint">Erros e conceitos que confundi</p><textarea class="er"></textarea>';
+    const ta=det.querySelector('.er');ta.value=t.erros||'';
+    ta.oninput=()=>{t.erros=ta.value;save()};
+    el.querySelector('.t-title').onclick=()=>{det.style.display=det.style.display==='none'?'block':'none'};
+    el.querySelector('.rev').onclick=()=>{
+      t.stage++;
+      const S=stagesOf(t);
+      t.due=t.stage<S.length?ymd(addDays(new Date(),S[t.stage]-S[t.stage-1])):ymd(addDays(new Date(),30));
+      save();renderTopics();
+    };
+    el.querySelector('.del').onclick=()=>{state.topics=state.topics.filter(x=>x.id!==t.id);save();renderTopics();renderCapHoje()};
+    el.appendChild(det);
+    h.appendChild(el);
+  });
+}
+
+/* ---------- SEMANA ---------- */
+function renderExams(){
+  const t=today(),out=[];
+  SEM.forEach(w=>w[2].forEach((day,i)=>day.forEach(e=>{
+    if(e[2]==='aval')out.push({d:ymd(addDays(parse(w[0]),i)),t:e[1]})})));
+  const seen=new Set();
+  const nx=out.filter(e=>{const k=e.d+e.t;if(seen.has(k))return false;seen.add(k);return dayDiff(t,e.d)>=0})
+    .sort((a,b)=>a.d.localeCompare(b.d)).slice(0,4);
+  const h=document.getElementById('exams');h.innerHTML='';
+  nx.forEach(e=>{
+    const dd=dayDiff(t,e.d),el=document.createElement('div');el.className='exam';
+    el.innerHTML=`<div class="cd">${dd===0?'hoje':dd}<small>${dd===0?'':' dias'}</small></div><div class="en"></div>
+      <div class="ed">${parse(e.d).toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'})}</div>`;
+    el.querySelector('.en').textContent=e.t;h.appendChild(el);
+  });
+}
+function renderPlan(){
+  const [ini,tema,dias]=SEM[wi],d0=parse(ini);
+  document.getElementById('range').textContent=
+    d0.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' — '+
+    addDays(d0,6).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+` · sem ${wi+1}/21`;
+  document.getElementById('tema').textContent=tema;
+  const host=document.getElementById('plan');host.innerHTML='';
+  dias.forEach((day,i)=>{
+    const date=addDays(d0,i),ds=ymd(date);
+    const row=document.createElement('div');
+    row.className='pday'+(ds===today()?' is-today':'');
+    row.innerHTML=`<div class="pd-label"><b>${DAYN[i]} ${date.getDate()}/${date.getMonth()+1}</b></div><div class="bs"></div>`;
+    const bh=row.querySelector('.bs');
+    if(!day.length)bh.innerHTML='<span class="status">área verde</span>';
+    day.forEach(e=>{
+      const el=document.createElement('div');el.className='blk b-'+e[2];
+      el.innerHTML=`<span class="hh">${e[0]<0?'dia inteiro':hhmm(SLOTS[e[0]][0])+'–'+hhmm(SLOTS[e[0]][1])}</span>
+        <span class="tt"></span><span class="kk">${e[3]||AREAS[e[2]]}</span>`;
+      el.querySelector('.tt').textContent=e[1];
+      if(CAPTURAVEL.includes(e[2])){
+        const has=state.topics.some(t=>t.title===e[1]);
+        const b=document.createElement('button');b.className='add'+(has?' done':'');
+        b.textContent=has?'capturada':'capturar';
+        if(!has)b.onclick=()=>{
+          document.getElementById('cTitle').value=e[1];
+          document.getElementById('cArea').value=e[2];
+          document.getElementById('cTrilha').value=CUMULATIVA.includes(e[2])?'cum':'bloco';
+          document.querySelector('#tabs button[data-v="captura"]').click();
+          window.scrollTo(0,0);
+        };
+        el.appendChild(b);
+      }
+      bh.appendChild(el);
+    });
+    host.appendChild(row);
+  });
+}
+prevW.onclick=()=>{if(wi>0){wi--;renderPlan()}};
+nextW.onclick=()=>{if(wi<SEM.length-1){wi++;renderPlan()}};
+nowW.onclick=()=>{wi=currentWeek();renderPlan()};
+
+/* ---------- PRÉ-AULA ---------- */
+const CAMPOS={
+ cha:[
+  ['queixas','Motivos de consulta prováveis','As 3 queixas mais comuns da área do rodízio. É o que provavelmente vai entrar na estação.'],
+  ['anamnese','Perguntas obrigatórias da anamnese','Umas 8 — as que, se esquecer, custam ponto no checklist.'],
+  ['exame','Exame físico na ordem','Sequência, não lista solta. É a ordem que trava na hora.'],
+  ['alarme','Sinais de alarme','O que muda a conduta na hora.'],
+  ['fala','Três frases de comunicação','Abertura, explicação da hipótese, fechamento. Escreva do jeito que você falaria.']],
+ tut:[
+  ['obj','Objetivos de aprendizagem','Copie os objetivos definidos na sessão anterior, um por linha.'],
+  ['resp','Três linhas por objetivo','Escreva de memória depois de uma consulta rápida. Curto de propósito.'],
+  ['duvida','Minha dúvida específica','O entregável real. "Não entendi por que X explica Y" vale mais que recitar o objetivo.']],
+ mon:[
+  ['erro','Erro esperado da turma','Qual confusão eles vão trazer? Comece por aí, não pelo conteúdo.'],
+  ['expl','Como vou explicar esse ponto','Em voz alta, do jeito que você falaria na frente deles.'],
+  ['caso','Caso curto para usar','Um caso de 4 linhas que force o raciocínio certo.']]
+};
+function renderPreFields(){
+  const t=document.getElementById('pTipo').value,h=document.getElementById('pFields');
+  h.innerHTML='';
+  CAMPOS[t].forEach(([k,lab,dica])=>{
+    const d=document.createElement('div');d.style.marginBottom='10px';
+    d.innerHTML=`<p class="hint" style="margin:0 0 3px">${lab}</p>
+      <p style="font-size:12.5px;color:var(--sage);margin:0 0 5px">${dica}</p>
+      <textarea class="pf" data-k="${k}"></textarea>`;
+    h.appendChild(d);
+  });
+}
+document.getElementById('pTipo').onchange=renderPreFields;
+document.getElementById('bClearPre').onclick=()=>{
+  document.getElementById('pTitle').value='';
+  document.querySelectorAll('.pf').forEach(t=>t.value='');
+};
+document.getElementById('bSavePre').onclick=()=>{
+  const ti=document.getElementById('pTitle');
+  if(!ti.value.trim()){flag('preStat','falta o título');return}
+  const tipo=document.getElementById('pTipo').value,campos={};
+  document.querySelectorAll('.pf').forEach(t=>campos[t.dataset.k]=t.value);
+  state.preps=state.preps||[];
+  state.preps.push({id:Date.now()+''+Math.random(),tipo,title:ti.value.trim(),campos,data:today()});
+  save();document.getElementById('bClearPre').click();renderPreList();flag('preStat','salva');
+};
+function renderPreList(){
+  const h=document.getElementById('preList');h.innerHTML='';
+  const ps=(state.preps||[]).slice().reverse();
+  if(!ps.length){h.innerHTML='<div class="empty">Nada preparado ainda.</div>';return}
+  const nomes={cha:'CHA',tut:'Tutoria',mon:'Monitoria'};
+  ps.forEach(p=>{
+    const el=document.createElement('div');el.className='topic';
+    el.innerHTML=`<div class="thead"><div><span class="t-title"></span>
+      <span class="t-meta"><span class="t-area cha">${nomes[p.tipo]}</span><span>${p.data.split('-').reverse().slice(0,2).join('/')}</span></span></div>
+      <div></div><div class="t-act"><button class="act ghost del">✕</button></div></div>`;
+    el.querySelector('.t-title').textContent=p.title;
+    const det=document.createElement('div');det.className='detail';det.style.display='none';
+    det.innerHTML=CAMPOS[p.tipo].map(([k,lab])=>
+      `<p class="hint" style="margin:8px 0 3px">${lab}</p><p style="margin:0;white-space:pre-wrap;font-size:14px">${esc(p.campos[k]||'—')}</p>`).join('');
+    el.querySelector('.t-title').onclick=()=>{det.style.display=det.style.display==='none'?'block':'none'};
+    el.querySelector('.del').onclick=()=>{state.preps=state.preps.filter(x=>x.id!==p.id);save();renderPreList()};
+    el.appendChild(det);h.appendChild(el);
+  });
+}
+
+document.getElementById('bExp').onclick=exportar;
+document.getElementById('bImp').onclick=()=>document.getElementById('fImp').click();
+document.getElementById('fImp').onchange=e=>{if(e.target.files[0])importar(e.target.files[0])};
+
+(async()=>{
+  await load();
+  wi=currentWeek();
+  renderPick();renderCapForm();renderCapHoje();renderTopics();renderExams();renderPlan();
+  renderPreFields();renderPreList();
+})();
+</script>
+</body>
+</html>
